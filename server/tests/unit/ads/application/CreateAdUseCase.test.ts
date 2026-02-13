@@ -1,7 +1,7 @@
-import { CreateAdUseCase } from '../../../src/modules/ads/application/use-cases/CreateAdUseCase';
-import { IAdRepository } from '../../../src/modules/ads/application/ports/IAdRepository';
-import { Ad } from '../../../src/modules/ads/domain/entities/Ad';
-import { ValidationException } from '../../../src/shared/domain/exceptions/DomainException';
+import { CreateAdUseCase } from '@/modules/ads/application/use-cases/CreateAdUseCase';
+import { IAdRepository } from '@/modules/ads/application/ports/IAdRepository';
+import { Ad } from '@/modules/ads/domain/entities/Ad';
+import { ValidationException } from '@/shared/domain/exceptions/DomainException';
 
 // Mock repository
 class MockAdRepository implements IAdRepository {

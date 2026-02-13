@@ -1,5 +1,5 @@
-import { User } from '../entities/User';
-import { Email } from '../value-objects/Email';
+import { User } from '../../domain/entities/User';
+import { Email } from '../../domain/value-objects/Email';
 
 export interface IUserRepository {
     save(user: User): Promise<void>;

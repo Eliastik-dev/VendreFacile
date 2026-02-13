@@ -15,7 +15,7 @@ export class SearchCache {
         await this.redisClient.set(key, value, this.ttl);
     }
 
-    public async invalidateAdRelated(adId: string): Promise<void> {
+    public async invalidateAdRelated(_adId: string): Promise<void> {
 
         await this.redisClient.deletePattern('search:*');
     }

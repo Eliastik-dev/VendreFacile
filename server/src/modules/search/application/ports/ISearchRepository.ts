@@ -1,5 +1,5 @@
 import { Ad } from '../../../ads/domain/entities/Ad';
-import { SearchQuery } from '../value-objects/SearchQuery';
+import { SearchQuery } from '../../domain/value-objects/SearchQuery';
 
 export interface ISearchRepository {
     search(query: SearchQuery): Promise<Ad[]>;

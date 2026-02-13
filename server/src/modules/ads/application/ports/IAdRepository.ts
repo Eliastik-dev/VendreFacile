@@ -1,5 +1,5 @@
-import { Ad } from '../entities/Ad';
-import { AdStatus } from '../enums/AdStatus';
+import { Ad } from '../../domain/entities/Ad';
+import { AdStatus } from '../../domain/enums/AdStatus';
 
 export interface IAdRepository {
     save(ad: Ad): Promise<void>;

@@ -26,8 +26,9 @@ export class PostgresUserRepository implements IUserRepository {
 
         const firstNameEncrypted = this.encryptionService.encrypt(user.getFirstName());
         const lastNameEncrypted = this.encryptionService.encrypt(user.getLastName());
-        const phoneEncrypted = user.getPhone()
-            ? this.encryptionService.encrypt(user.getPhone())
+        const phone = user.getPhone();
+        const phoneEncrypted = phone
+            ? this.encryptionService.encrypt(phone)
             : null;
 
         const query = `

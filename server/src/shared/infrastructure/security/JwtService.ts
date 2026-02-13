@@ -18,14 +18,14 @@ export class JwtService {
     }
 
     public generateAccessToken(payload: JwtPayload): string {
-        return jwt.sign(payload, this.secret, {
-            expiresIn: this.expiresIn,
+        return jwt.sign({ ...payload }, this.secret as jwt.Secret, {
+            expiresIn: this.expiresIn as jwt.SignOptions['expiresIn'],
         });
     }
 
     public generateRefreshToken(payload: JwtPayload): string {
-        return jwt.sign(payload, this.secret, {
-            expiresIn: this.refreshExpiresIn,
+        return jwt.sign({ ...payload }, this.secret as jwt.Secret, {
+            expiresIn: this.refreshExpiresIn as jwt.SignOptions['expiresIn'],
         });
     }
 

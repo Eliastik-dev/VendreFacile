@@ -16,5 +16,9 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 -- Check constraint for role
-ALTER TABLE users ADD CONSTRAINT check_role 
-    CHECK (role IN ('USER', 'ADMIN'));
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'check_role') THEN
+        ALTER TABLE users ADD CONSTRAINT check_role CHECK (role IN ('USER', 'ADMIN'));
+    END IF;
+END $$;

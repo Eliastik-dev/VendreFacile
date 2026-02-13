@@ -1,5 +1,5 @@
-import { Price } from '../../../src/modules/ads/domain/value-objects/Price';
-import { ValidationException } from '../../../src/shared/domain/exceptions/DomainException';
+import { Price } from '@/modules/ads/domain/value-objects/Price';
+import { ValidationException } from '@/shared/domain/exceptions/DomainException';
 
 describe('Price Value Object', () => {
     describe('Creation', () => {

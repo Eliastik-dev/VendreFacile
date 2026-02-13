@@ -27,9 +27,13 @@ CREATE INDEX IF NOT EXISTS idx_ads_city ON ads(city);
 CREATE INDEX IF NOT EXISTS idx_ads_title_description ON ads USING GIN(to_tsvector('french', title || ' ' || description));
 
 -- Check constraint for status
-ALTER TABLE ads ADD CONSTRAINT check_status 
-    CHECK (status IN ('DRAFT', 'PUBLISHED', 'SOLD', 'ARCHIVED'));
-
--- Check constraint for price
-ALTER TABLE ads ADD CONSTRAINT check_price_positive 
-    CHECK (price_amount >= 0);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'check_status') THEN
+        ALTER TABLE ads ADD CONSTRAINT check_status CHECK (status IN ('DRAFT', 'PUBLISHED', 'SOLD', 'ARCHIVED'));
+    END IF;
+    
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'check_price_positive') THEN
+        ALTER TABLE ads ADD CONSTRAINT check_price_positive CHECK (price_amount >= 0);
+    END IF;
+END $$;

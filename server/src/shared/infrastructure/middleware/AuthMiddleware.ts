@@ -50,7 +50,7 @@ export class AuthMiddleware {
 
     public optionalAuth = (
         req: AuthenticatedRequest,
-        res: Response,
+        _res: Response,
         next: NextFunction
     ): void => {
         try {

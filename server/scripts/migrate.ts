@@ -2,7 +2,7 @@ import { Pool } from 'pg';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
+
 
 dotenv.config();
 
@@ -33,8 +33,16 @@ async function runMigrations() {
             if (fs.existsSync(filePath)) {
                 console.log(`Executing migration: ${relativePath}`);
                 const sql = fs.readFileSync(filePath, 'utf8');
-                await db.query(sql);
-                console.log(`Migration successful: ${relativePath}`);
+                try {
+                    await db.query(sql);
+                    console.log(`Migration successful: ${relativePath}`);
+                } catch (err: any) {
+                    if (err.code === '42P07' || err.code === '42710') {
+                        console.log(`Migration skipped (already exists): ${relativePath}`);
+                    } else {
+                        throw err;
+                    }
+                }
             } else {
                 console.warn(`Migration file not found: ${filePath}`);
             }

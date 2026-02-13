@@ -29,7 +29,7 @@ export class PostgresClient {
         return PostgresClient.instance;
     }
 
-    public async query<T>(text: string, params?: any[]): Promise<QueryResult<T>> {
+    public async query<T extends import('pg').QueryResultRow>(text: string, params?: any[]): Promise<QueryResult<T>> {
         const start = Date.now();
         try {
             const result = await this.pool.query<T>(text, params);

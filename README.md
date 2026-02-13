@@ -1,4 +1,12 @@
-# VendreFacile - Full Stack Classified Ads Platform
+# VendreFacile
+ 
+ ## Docker Access
+ - **Frontend**: [http://localhost:5174](http://localhost:5174)
+ - **Backend API**: [http://localhost:3001](http://localhost:3001)
+ - **Postgres Primary**: Localhost:5432
+ - **Postgres Replica**: Localhost:5433
+ 
+ ## Development - Full Stack Classified Ads Platform
 
 ![Architecture](https://img.shields.io/badge/Architecture-Hexagonal-blue)
 ![DDD](https://img.shields.io/badge/Pattern-DDD-green)

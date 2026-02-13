@@ -1,5 +1,5 @@
-import { Message } from '../entities/Message';
-import { Conversation } from '../entities/Conversation';
+import { Message } from '../../domain/entities/Message';
+import { Conversation } from '../../domain/entities/Conversation';
 
 export interface IMessagingRepository {
     saveConversation(conversation: Conversation): Promise<void>;

@@ -1,11 +1,11 @@
-import { Ad } from '../../../src/modules/ads/domain/entities/Ad';
-import { Price } from '../../../src/modules/ads/domain/value-objects/Price';
-import { Location } from '../../../src/modules/ads/domain/value-objects/Location';
-import { AdStatus } from '../../../src/modules/ads/domain/enums/AdStatus';
+import { Ad } from '@/modules/ads/domain/entities/Ad';
+import { Price } from '@/modules/ads/domain/value-objects/Price';
+import { Location } from '@/modules/ads/domain/value-objects/Location';
+import { AdStatus } from '@/modules/ads/domain/enums/AdStatus';
 import {
     ValidationException,
     AuthorizationException,
-} from '../../../src/shared/domain/exceptions/DomainException';
+} from '@/shared/domain/exceptions/DomainException';
 
 describe('Ad Domain Entity', () => {
     const validProps = {
