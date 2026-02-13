@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  postgres-primary:
+    image: postgres:15-alpine
+    container_name: vendrefacile_postgres_primary
+    environment:
+      POSTGRES_USER: vendrefacile
+      POSTGRES_PASSWORD: dev_password_change_in_production
+      POSTGRES_DB: vendrefacile_db
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+      - ./server/infrastructure/db/init-ha.sh:/docker-entrypoint-initdb.d/init-ha.sh
+    command: postgres -c wal_level=replica -c hot_standby=on -c max_wal_senders=10 -c max_replication_slots=10 -c hot_standby_feedback=on
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vendrefacile -d vendrefacile_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres-replica:
+    image: postgres:15-alpine
+    container_name: vendrefacile_postgres_replica
+    ports:
+      - "5433:5432"
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: replication_password
+      POSTGRES_PASSWORD: dev_password_change_in_production
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+    command: |
+      bash -c "
+      until pg_isready -h postgres-primary -p 5432 -U vendrefacile -d vendrefacile_db; do echo waiting for primary; sleep 2; done;
+      if [ ! -f /var/lib/postgresql/data/standby_initialized ]; then
+        echo 'Initializing replica...'
+        rm -rf /var/lib/postgresql/data/*
+        pg_basebackup -d "postgresql://replication_user:replication_password@postgres-primary:5432" -D /var/lib/postgresql/data -v -P -R -X stream || { echo 'BACKUP FAILED'; exit 1; }
+        touch /var/lib/postgresql/data/standby.signal
+        touch /var/lib/postgresql/data/standby_initialized
+      fi
+      docker-entrypoint.sh postgres
+      "
+
+  redis:
+    image: redis:7-alpine
+    container_name: vendrefacile_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass dev_redis_password
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: vendrefacile_server
+    ports:
+      - "3001:3000"
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=postgres-primary
+      - DB_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: vendrefacile_client
+    ports:
+      - "5174:5173"
+    depends_on:
+      - server
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+volumes:
+  postgres_primary_data:
+  postgres_replica_data:
+  redis_data:
